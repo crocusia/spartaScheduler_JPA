@@ -24,7 +24,7 @@ public class TaskController {
     @PostMapping
     public ResponseEntity<TaskResponseDto> createTask(
             @Valid @RequestBody TaskCreateRequestDto createDto,
-            @ModelAttribute("loginUser") UserSessionDto loginUser
+            @SessionAttribute("loginUser") UserSessionDto loginUser
     ) {
         //세션에 저장된 데이터를 사용하기 위해 매개변수로 넘김
         TaskResponseDto taskResponseDto = taskService.saveTask(loginUser.getUserId(), createDto);
@@ -53,7 +53,7 @@ public class TaskController {
     public ResponseEntity<TaskResponseDto> updateTask(
             @PathVariable Long id,
             @Valid @RequestBody TaskUpdateRequestDto updateDto,
-            @ModelAttribute("loginUser") UserSessionDto loginUser
+            @SessionAttribute("loginUser") UserSessionDto loginUser
     ) {
         TaskResponseDto taskResponseDto = taskService.updateTask(id, loginUser.getUserId(), updateDto);
         return ResponseEntity.ok(taskResponseDto);
@@ -63,7 +63,7 @@ public class TaskController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTask(
             @PathVariable Long id,
-            @ModelAttribute("loginUser") UserSessionDto loginUser) {
+            @SessionAttribute("loginUser") UserSessionDto loginUser) {
         //본인 일정 지우는데 편하게 지우게하자 (비밀번호 추가 검증은 유저 삭제에서만!)
         //필터에서 이미 세션 검증한 상태
         taskService.deleteTask(id, loginUser.getUserId());

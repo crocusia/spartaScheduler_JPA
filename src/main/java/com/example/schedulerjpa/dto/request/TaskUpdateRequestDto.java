@@ -8,12 +8,4 @@ import lombok.Getter;
 public class TaskUpdateRequestDto {
     private String title;
     private String content;
-
-    public void updateTitle(String title){
-        this.title = title;
-    }
-
-    public void updateContent(String content){
-        this.content = content;
-    }
 }

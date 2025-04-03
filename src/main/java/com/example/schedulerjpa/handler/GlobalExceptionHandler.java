@@ -39,13 +39,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<Map<String, Object>> handleResponseStatusException(ResponseStatusException ex) {
+    public ResponseEntity<Map<String, Object>> handleResponseStatusException(ResponseStatusException e) {
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("timestamp", LocalDateTime.now());
-        errorResponse.put("status", ex.getStatusCode().value());
-        errorResponse.put("message", ex.getReason());
+        errorResponse.put("status", e.getStatusCode().value());
+        errorResponse.put("message", e.getReason());
 
-        return ResponseEntity.status(ex.getStatusCode()).body(errorResponse);
+        return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
     }
 }
 

@@ -8,12 +8,13 @@ import com.example.schedulerjpa.entity.User;
 import com.example.schedulerjpa.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+@Slf4j
 @Service
-//@Transactional
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
@@ -56,7 +57,9 @@ public class UserServiceImpl implements UserService {
     public UserResponseDto updateUserName(Long userId, UserNameUpdateRequestDto updateDto){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 유저가 존재하지 않습니다."));
-        user.updateName(updateDto.getName()); //이름 수정, 별도의 save는 해주지 않아도 JPA가 자동으로 해준다고 함!
+        user.updateName(updateDto.getName());
+        log.info("이름 수정");
+        userRepository.save(user);
         return new UserResponseDto(user.getName(), user.getEmail(), user.getUpdatedAt());
     }
 

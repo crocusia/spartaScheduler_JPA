@@ -9,10 +9,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
 
+@Slf4j
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -59,8 +62,8 @@ public class UserController {
     }
 
     //마이페이지
-    @PostMapping("/me")
-    public ResponseEntity<UserResponseDto> myPage(@ModelAttribute("loginUser") UserSessionDto loginUser){
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDto> myPage(@SessionAttribute("loginUser") UserSessionDto loginUser){
         UserResponseDto userResponseDto = userService.findUserById(loginUser.getUserId());
         return ResponseEntity.ok((userResponseDto));
     }
@@ -76,7 +79,7 @@ public class UserController {
     @PatchMapping("/me/name")
     public ResponseEntity<UserResponseDto> updateUserName(
             @Valid @RequestBody UserNameUpdateRequestDto updateDto,
-            @ModelAttribute("loginUser") UserSessionDto loginUser
+            @SessionAttribute("loginUser") UserSessionDto loginUser
     ) {
         UserResponseDto userResponseDto = userService.updateUserName(loginUser.getUserId(), updateDto);
         return ResponseEntity.ok(userResponseDto);
@@ -86,19 +89,28 @@ public class UserController {
     @PatchMapping("/me/password")
     public ResponseEntity<String> updateUserPassword(
             @Valid @RequestBody UserPasswordUpdateRequestDto updateDto,
-            @ModelAttribute("loginUser") UserSessionDto loginUser
+            @SessionAttribute("loginUser") UserSessionDto loginUser
     ) {
         userService.updateUserPassword(loginUser.getUserId(), updateDto);
         return ResponseEntity.ok("비밀번호 변경 성공");
     }
 
     //유저 삭제
-    @PatchMapping("/me")
+    @DeleteMapping("/me")
     public ResponseEntity<String> deleteUser(
             @Valid @RequestBody UserDeleteRequestDto deleteDto,
-            @ModelAttribute("loginUser") UserSessionDto loginUser
+            HttpServletRequest request
     ) {
+        HttpSession session = request.getSession(false);
+
+        if (session == null || session.getAttribute("loginUser") == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+        }
+
+        UserSessionDto loginUser = (UserSessionDto) session.getAttribute("loginUser");
         userService.deleteUser(loginUser.getUserId(), deleteDto);
+        //세션 무효화
+        session.invalidate();
         return ResponseEntity.ok("유저 삭제 성공");
     }
 
