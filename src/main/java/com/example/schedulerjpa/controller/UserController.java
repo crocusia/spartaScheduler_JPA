@@ -73,7 +73,7 @@ public class UserController {
     }
 
     //유저 이름 변경
-    @PatchMapping("/me")
+    @PatchMapping("/me/name")
     public ResponseEntity<UserResponseDto> updateUserName(
             @Valid @RequestBody UserNameUpdateRequestDto updateDto,
             @ModelAttribute("loginUser") UserSessionDto loginUser
@@ -83,7 +83,7 @@ public class UserController {
     }
 
     //유저 비밀번호 변경
-    @PatchMapping("/me")
+    @PatchMapping("/me/password")
     public ResponseEntity<String> updateUserPassword(
             @Valid @RequestBody UserPasswordUpdateRequestDto updateDto,
             @ModelAttribute("loginUser") UserSessionDto loginUser
