@@ -5,13 +5,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
+//import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 @Slf4j
-@Component //자동 등록
+//@Componete를 사용하면 자동 등록이 가능하다.
+//그러나 요구사항에 @Configuration을 활용하라고 명시되어있으므로 변경함
 public class LoginFilter implements Filter {
 
     //로그인 여부를 확인하지 않는 URL

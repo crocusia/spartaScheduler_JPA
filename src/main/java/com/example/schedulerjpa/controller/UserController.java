@@ -31,16 +31,20 @@ public class UserController {
             @Valid @RequestBody LoginRequestDto loginRequest,
             HttpServletRequest request
     ){
-        HttpSession session = request.getSession();
+        HttpSession existingSession  = request.getSession(false);
 
-        if(session.getAttribute("loginUser") != null){
+        //세션이 존재하고 loginUser가 null이 아니라면
+        if(existingSession!=null && existingSession.getAttribute("loginUser") != null){
             return ResponseEntity.badRequest().body("이미 로그인된 상태입니다.");
         }
 
         UserSessionDto loginUser = userService.login(loginRequest);
-
+        //로그인 성공 시, 새로운 세션 생성
+        HttpSession session = request.getSession(false);
         //세션에 사용자 정보 저장
         session.setAttribute("loginUser", loginUser);
+        //세션 유효시간 30분
+        session.setMaxInactiveInterval(30 * 60);
         return ResponseEntity.ok("로그인 성공");
     }
 

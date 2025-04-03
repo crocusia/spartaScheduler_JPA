@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 계정이 존재하지 않습니다."));
 
         if(!user.comparePassword(loginRequestDto.getPassword())){
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "비밀번호가 일치하지 않습니다.");
         }
         //세션을 위한 DTO 생성 및 반환
         return new UserSessionDto(user.getId(), user.getName());
@@ -46,7 +46,8 @@ public class UserServiceImpl implements UserService {
     //조회 - 유저 아이디에 따른 유저 프로필 조회
     @Override
     public UserResponseDto findUserById(Long userId){
-        User user = userRepository.findById(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 유저가 존재하지 않습니다."));
         return new UserResponseDto(user.getName(), user.getEmail(), user.getUpdatedAt());
     }
 
