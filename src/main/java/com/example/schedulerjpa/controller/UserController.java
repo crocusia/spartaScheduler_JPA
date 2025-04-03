@@ -20,7 +20,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup") //회원가입
-    public ResponseEntity<UserSignUpResponseDto> signUp(@RequestBody UserSignUpRequestDto signUpDto){
+    public ResponseEntity<UserSignUpResponseDto> signUp(@Valid @RequestBody UserSignUpRequestDto signUpDto){
         UserSignUpResponseDto userSignUpResponseDto = userService.signUp(signUpDto);
         return new ResponseEntity<>(userSignUpResponseDto, HttpStatus.CREATED);
     }
@@ -40,7 +40,7 @@ public class UserController {
 
         UserSessionDto loginUser = userService.login(loginRequest);
         //로그인 성공 시, 새로운 세션 생성
-        HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession(true);
         //세션에 사용자 정보 저장
         session.setAttribute("loginUser", loginUser);
         //세션 유효시간 30분
