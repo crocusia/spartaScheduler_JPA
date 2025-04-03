@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Task extends BaseEntity {
     @Id
+    @Column(name = "task_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY) //쓰기 지연 무시, persist() 시점에 바로 조회 가능 -> JPA가 알아야 하니까
     private Long id;
 

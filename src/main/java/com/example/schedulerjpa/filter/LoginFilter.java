@@ -16,7 +16,7 @@ import java.io.IOException;
 public class LoginFilter implements Filter {
 
     //로그인 여부를 확인하지 않는 URL
-    private static final String[] WHITE_LIST = {"/", "/user/signup", "/login", "/logout"};
+    private static final String[] WHITE_LIST = {"/", "/users/signup", "/users/login", "/users/logout"};
     private static final String SESSION_KEY = "loginUser";
     private static final AntPathMatcher PATH_MATCHER = new AntPathMatcher(); // URL 패턴 매칭
 
@@ -38,6 +38,7 @@ public class LoginFilter implements Filter {
             HttpSession session = httpRequest.getSession(false);
             if (session == null || session.getAttribute(SESSION_KEY) == null) {
                 httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "로그인이 필요합니다.");
+                return;
             }
         }
 

@@ -14,9 +14,10 @@ import java.time.LocalDateTime;
 public class BaseEntity { //공통 Entity
     //등록일
     @CreatedDate
-    @Column(updatable = false) //수정되지 않음
+    @Column(name = "created_at", updatable = false) //수정되지 않음
     private LocalDateTime createdAt;
     //수정일
     @LastModifiedDate
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 }
