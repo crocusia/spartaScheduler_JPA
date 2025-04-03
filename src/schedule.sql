@@ -24,7 +24,7 @@ CREATE TABLE comments
     comments_id BIGINT PRIMARY KEY COMMENT '댓글 식별자',                    -- 고유키
     task_id     BIGINT       NOT NULL COMMENT '일정 식별자',                 -- 외래키, 댓글이 적힌 일정
     user_id     BIGINT       NOT NULL COMMENT '작성자 식별자',                -- 외래키, 작성자명을 불러올 때 사용함
-    content     VARCHAR(200) NOT NULL COMMENT '댓긋',                     -- 최대 200자 제한
+    content     VARCHAR(200) NOT NULL COMMENT '댓글',                     -- 최대 200자 제한
     created_at  TIMESTAMP COMMENT '작성일',
     updated_at  TIMESTAMP COMMENT '수정일',
     FOREIGN KEY (task_id) REFERENCES tasks (task_id) ON DELETE CASCADE, -- 외래키 / 일정 삭제 시, 해당 일정의 댓글이 삭제됨
