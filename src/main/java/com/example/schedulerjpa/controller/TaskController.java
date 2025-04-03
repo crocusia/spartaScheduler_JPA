@@ -34,10 +34,9 @@ public class TaskController {
     //특정 조건을 만족하는 일정 전체 조회
     @GetMapping
     public ResponseEntity<List<TaskResponseDto>> findTasks(
-            @RequestParam(required = false) Optional<Long> userId,
+            @RequestParam(required = false) Long userId,
             @RequestParam(required = false, defaultValue = "") String updatedAt) {
-        Long userIdValue = userId.orElse(null);
-        List<TaskResponseDto> taskResponseDto = taskService.findTasks(userIdValue, updatedAt);
+        List<TaskResponseDto> taskResponseDto = taskService.findTasks(userId, updatedAt);
         return ResponseEntity.ok(taskResponseDto);
     }
 

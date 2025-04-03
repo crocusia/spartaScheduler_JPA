@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserSignUpResponseDto signUp(UserSignUpRequestDto signUpDto){
         //이미 존재하는 이메일인지 확인
-        if(userRepository.findByEmail(signUpDto.getEmail()).isPresent()){
+        if(userRepository.existsByEmail(signUpDto.getEmail())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 사용 중인 이메일입니다.");
         }
         //새로운 이메일이라면 저장
@@ -58,7 +58,6 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 유저가 존재하지 않습니다."));
         user.updateName(updateDto.getName());
-        log.info("이름 수정");
         userRepository.save(user);
         return new UserResponseDto(user.getName(), user.getEmail(), user.getUpdatedAt());
     }

@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
@@ -48,13 +47,7 @@ public class TaskServiceImpl implements TaskService {
         List<Task> tasks = taskRepository.findTasks(userId, dateTime);
 
         return tasks.stream()
-                .map(task -> new TaskResponseDto(
-                        task.getId(),
-                        task.getUser().getId(),
-                        task.getUser().getName(),
-                        task.getTitle(),
-                        task.getContent(),
-                        task.getUpdatedAt()))
+                .map(TaskResponseDto::new)
                 .collect(Collectors.toList());
     }
 
