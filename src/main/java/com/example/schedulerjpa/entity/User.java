@@ -1,5 +1,6 @@
 package com.example.schedulerjpa.entity;
 
+import com.example.schedulerjpa.config.PasswordEncoder;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,8 +35,8 @@ public class User extends BaseEntity{
     public boolean checkisMine(Long userId){
         return Objects.equals(this.id, userId);
     }
-    public boolean comparePassword(String password){
-        return this.password.equals(password);
+    public boolean checkPassword(String password, PasswordEncoder passwordEncoder){
+        return passwordEncoder.matches(password, this.password);
     }
 
     public void updateName(String name) {

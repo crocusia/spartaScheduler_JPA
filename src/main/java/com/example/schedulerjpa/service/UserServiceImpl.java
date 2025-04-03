@@ -1,5 +1,6 @@
 package com.example.schedulerjpa.service;
 
+import com.example.schedulerjpa.config.PasswordEncoder;
 import com.example.schedulerjpa.dto.request.*;
 import com.example.schedulerjpa.dto.response.UserResponseDto;
 import com.example.schedulerjpa.dto.response.UserSessionDto;
@@ -18,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     //회원가입
     @Override
     public UserSignUpResponseDto signUp(UserSignUpRequestDto signUpDto){
@@ -26,7 +28,10 @@ public class UserServiceImpl implements UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 사용 중인 이메일입니다.");
         }
         //새로운 이메일이라면 저장
-        User user = new User(signUpDto.getName(), signUpDto.getEmail(), signUpDto.getPassword());
+        //비밀번호 암호화 후 저장
+        String encodedPassword = passwordEncoder.encode(signUpDto.getPassword());
+        log.info("암호화된 비밀번호: {}", encodedPassword);
+        User user = new User(signUpDto.getName(), signUpDto.getEmail(), encodedPassword);
         userRepository.save(user);
 
         return new UserSignUpResponseDto(user.getName(), user.getEmail());
@@ -37,7 +42,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(loginRequestDto.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 계정이 존재하지 않습니다."));
 
-        if(!user.comparePassword(loginRequestDto.getPassword())){
+        if(!user.checkPassword(loginRequestDto.getPassword(), passwordEncoder)){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "비밀번호가 일치하지 않습니다.");
         }
         //세션을 위한 DTO 생성 및 반환
@@ -68,7 +73,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 유저가 존재하지 않습니다."));
 
         //입력된 비밀번호가 현재 비밀번호와 일치하는지 검사
-        if(!user.comparePassword(updateDto.getCurrentPassword())){
+        if(!user.checkPassword(updateDto.getCurrentPassword(), passwordEncoder)){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
         }
 
@@ -82,7 +87,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 유저가 존재하지 않습니다."));
 
         //입력된 비밀번호가 현재 비밀번호와 일치하는지 검사
-        if(!user.comparePassword(deleteDto.getPassword())){
+        if(!user.checkPassword(deleteDto.getPassword(), passwordEncoder)){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
         }
 
