@@ -84,7 +84,7 @@ public class UserController {
         return ResponseEntity.ok(userResponseDto);
     }
 
-    //유저 비밀번호 변경 (통합하기)
+    //유저 비밀번호 변경
     @PatchMapping("/password")
     public ResponseEntity<String> updateUserPassword(
             @Valid @RequestBody UserPasswordUpdateRequestDto updateDto,

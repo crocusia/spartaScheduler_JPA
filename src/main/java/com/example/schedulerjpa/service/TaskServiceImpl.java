@@ -5,6 +5,7 @@ import com.example.schedulerjpa.dto.request.TaskUpdateRequestDto;
 import com.example.schedulerjpa.dto.response.TaskResponseDto;
 import com.example.schedulerjpa.entity.Task;
 import com.example.schedulerjpa.entity.User;
+import com.example.schedulerjpa.repository.CommentRepository;
 import com.example.schedulerjpa.repository.TaskRepository;
 import com.example.schedulerjpa.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
     //일정 생성
     @Override
@@ -36,7 +39,7 @@ public class TaskServiceImpl implements TaskService {
         //흠... 제목... 뭐 중복일 수 있지 굳이 확인하지 말고 그냥 만들자
         Task task = new Task(user, createDto.getTitle(), createDto.getContent());
         taskRepository.save(task);
-        return new TaskResponseDto(task);
+        return new TaskResponseDto(task, commentRepository.countByTaskId(task.getId()));
     }
 
     //일정 목록 조건 기반 조회
@@ -60,14 +63,31 @@ public class TaskServiceImpl implements TaskService {
                     cb.equal(cb.function("DATE", LocalDate.class, root.get("updatedAt")), date));
         }
         Page<Task> taskPage = taskRepository.findAll(spec, pageable);
-        return taskPage.map(TaskResponseDto::new);
+
+        //페이지 내의 일정 id를 모아옴
+        List<Long> taskIds = taskPage.getContent().stream()
+                .map(Task::getId)
+                .toList();
+
+        //id에 따른 개수를 매핑
+        Map<Long, Long> commentCounts = commentRepository.countByTaskIds(taskIds).stream()
+                .collect(Collectors.toMap(
+                        row -> (Long) row[0],
+                        row -> (Long) row[1]
+                ));
+
+        //Task와 count로 TaskRespinseDto 리스트 생성
+        return taskPage.map(task -> {
+            Long count = commentCounts.getOrDefault(task.getId(), 0L);
+            return new TaskResponseDto(task, count);
+        });
     }
 
     //선택 일정 조회
     @Override
     public TaskResponseDto findTaskById(Long taskId) {
         Task task = taskRepository.findByIdOrElseThrow(taskId);
-        return new TaskResponseDto(task);
+        return new TaskResponseDto(task, commentRepository.countByTaskId(task.getId()));
     }
 
     //일정 수정
@@ -88,7 +108,7 @@ public class TaskServiceImpl implements TaskService {
             task.updateContent(updateDto.getContent());
         }
         taskRepository.save(task);
-        return new TaskResponseDto(task);
+        return new TaskResponseDto(task, commentRepository.countByTaskId(task.getId()));
     }
 
     //일정 삭제

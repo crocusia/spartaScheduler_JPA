@@ -6,6 +6,7 @@ import com.example.schedulerjpa.dto.response.UserResponseDto;
 import com.example.schedulerjpa.dto.response.UserSessionDto;
 import com.example.schedulerjpa.dto.response.UserSignUpResponseDto;
 import com.example.schedulerjpa.entity.User;
+import com.example.schedulerjpa.repository.CommentRepository;
 import com.example.schedulerjpa.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,8 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CommentRepository commentRepository;
+
     //회원가입
     @Override
     public UserSignUpResponseDto signUp(UserSignUpRequestDto signUpDto){
@@ -51,7 +54,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto findUserById(Long userId){
         User user = userRepository.findByIdOrElseThrow(userId);
-        return new UserResponseDto(user.getName(), user.getEmail(), user.getUpdatedAt());
+        return new UserResponseDto(user, commentRepository.countByUserId(user.getId()));
     }
 
     //수정 - 유저 이름 수정
@@ -60,7 +63,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByIdOrElseThrow(userId);
         user.updateName(updateDto.getName());
         userRepository.save(user);
-        return new UserResponseDto(user.getName(), user.getEmail(), user.getUpdatedAt());
+        return new UserResponseDto(user, commentRepository.countByUserId(user.getId()));
     }
 
     @Override

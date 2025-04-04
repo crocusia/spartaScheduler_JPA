@@ -14,4 +14,12 @@ public class UserResponseDto {
     private String email;     //이메일
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime updatedAt;
+    private Long commentsCount; //댓글 개수
+
+    public UserResponseDto(User user, Long count){
+        this.name = user.getName();
+        this.email = user.getEmail();
+        this.updatedAt = user.getUpdatedAt();
+        this. commentsCount = count;
+    }
 }

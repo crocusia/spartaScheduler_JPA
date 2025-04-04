@@ -18,13 +18,15 @@ public class TaskResponseDto {
     private String content;   //내용
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime updatedAt;
+    private Long commentsCount; //댓글 개수
 
-    public TaskResponseDto(Task task){
+    public TaskResponseDto(Task task, Long count){
         this.taskId = task.getId();
         this.userId = task.getUser().getId();
         this.name = task.getUser().getName();
         this.title = task.getTitle();
         this.content = task.getContent();
         this.updatedAt = task.getUpdatedAt();
+        this.commentsCount = count;
     }
 }
