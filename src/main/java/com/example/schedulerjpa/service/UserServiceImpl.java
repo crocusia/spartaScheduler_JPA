@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -32,7 +31,6 @@ public class UserServiceImpl implements UserService {
         //새로운 이메일이라면 저장
         //비밀번호 암호화 후 저장
         String encodedPassword = passwordEncoder.encode(signUpDto.getPassword());
-        log.info("암호화된 비밀번호: {}", encodedPassword);
         User user = new User(signUpDto.getName(), signUpDto.getEmail(), encodedPassword);
         userRepository.save(user);
 
@@ -75,7 +73,12 @@ public class UserServiceImpl implements UserService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
         }
 
+        String encodedPassword = passwordEncoder.encode(updateDto.getNewPassword());
+        user.updatePassword(encodedPassword);
+        userRepository.save(user);
+
         user.updatePassword(updateDto.getNewPassword());
+
     }
 
     //삭제 - 유저 삭제

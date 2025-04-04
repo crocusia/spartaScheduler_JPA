@@ -53,7 +53,7 @@ public class TaskServiceImpl implements TaskService {
                     cb.equal(root.get("user").get("id"), userId)));
         }
 
-        if(updatedAt != null){
+        if(updatedAt != null && !updatedAt.isBlank()){
             //문자열을 LocalDate로 변환 (YYYY-mm-dd)
             //캘린더에서 선택하는 방식을 사용한다는 가정하에 DATE 형식이 맞지 않는다는 가정은 제외함
             //아닐 경우 형식 검사 추가 필요
