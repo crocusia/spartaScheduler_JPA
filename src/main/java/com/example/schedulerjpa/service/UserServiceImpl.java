@@ -39,8 +39,7 @@ public class UserServiceImpl implements UserService {
     //로그인
     @Override
     public UserSessionDto login(LoginRequestDto loginRequestDto){
-        User user = userRepository.findByEmail(loginRequestDto.getEmail())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 계정이 존재하지 않습니다."));
+        User user = userRepository.findByEmailOrElseThrow(loginRequestDto.getEmail());
 
         if(!user.checkPassword(loginRequestDto.getPassword(), passwordEncoder)){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "비밀번호가 일치하지 않습니다.");
@@ -52,16 +51,14 @@ public class UserServiceImpl implements UserService {
     //조회 - 유저 아이디에 따른 유저 프로필 조회
     @Override
     public UserResponseDto findUserById(Long userId){
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 유저가 존재하지 않습니다."));
+        User user = userRepository.findByIdOrElseThrow(userId);
         return new UserResponseDto(user.getName(), user.getEmail(), user.getUpdatedAt());
     }
 
     //수정 - 유저 이름 수정
     @Override
     public UserResponseDto updateUserName(Long userId, UserNameUpdateRequestDto updateDto){
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 유저가 존재하지 않습니다."));
+        User user = userRepository.findByIdOrElseThrow(userId);
         user.updateName(updateDto.getName());
         userRepository.save(user);
         return new UserResponseDto(user.getName(), user.getEmail(), user.getUpdatedAt());
@@ -69,8 +66,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUserPassword(Long userId, UserPasswordUpdateRequestDto updateDto){
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 유저가 존재하지 않습니다."));
+        User user = userRepository.findByIdOrElseThrow(userId);
 
         //입력된 비밀번호가 현재 비밀번호와 일치하는지 검사
         if(!user.checkPassword(updateDto.getCurrentPassword(), passwordEncoder)){
@@ -83,9 +79,7 @@ public class UserServiceImpl implements UserService {
     //삭제 - 유저 삭제
     @Override
     public void deleteUser(Long userId, UserDeleteRequestDto deleteDto){
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 유저가 존재하지 않습니다."));
-
+        User user = userRepository.findByIdOrElseThrow(userId);
         //입력된 비밀번호가 현재 비밀번호와 일치하는지 검사
         if(!user.checkPassword(deleteDto.getPassword(), passwordEncoder)){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");

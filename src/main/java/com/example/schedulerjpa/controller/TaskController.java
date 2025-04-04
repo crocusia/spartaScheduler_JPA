@@ -9,6 +9,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,11 +37,12 @@ public class TaskController {
 
     //특정 조건을 만족하는 일정 전체 조회
     @GetMapping
-    public ResponseEntity<List<TaskResponseDto>> findTasks(
+    public ResponseEntity<Page<TaskResponseDto>> findTasks(
             @RequestParam(required = false) Long userId,
-            @RequestParam(required = false, defaultValue = "") String updatedAt) {
-        List<TaskResponseDto> taskResponseDto = taskService.findTasks(userId, updatedAt);
-        return ResponseEntity.ok(taskResponseDto);
+            @RequestParam(required = false, defaultValue = "") String updatedAt,
+            @PageableDefault(size = 10, sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<TaskResponseDto> taskPage = taskService.findTasks(userId, updatedAt, pageable);
+        return ResponseEntity.ok(taskPage);
     }
 
     //단일 일정 조회
