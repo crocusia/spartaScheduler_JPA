@@ -7,7 +7,6 @@ import com.example.schedulerjpa.dto.response.UserSessionDto;
 import com.example.schedulerjpa.dto.response.UserSignUpResponseDto;
 import com.example.schedulerjpa.entity.User;
 import com.example.schedulerjpa.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

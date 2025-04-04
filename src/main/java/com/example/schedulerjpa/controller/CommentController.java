@@ -60,7 +60,6 @@ public class CommentController {
         return ResponseEntity.ok(commentResponseDto);
     }
 
-
     //댓글 수정
     @PatchMapping("comments/{id}")
     public ResponseEntity<CommentResponseDto>updateComment(

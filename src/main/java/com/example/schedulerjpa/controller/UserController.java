@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.support.SessionStatus;
 
 @Slf4j
 @RestController
@@ -76,7 +75,7 @@ public class UserController {
     }
 
     //유저 이름 변경
-    @PatchMapping("/me/name")
+    @PatchMapping("/name")
     public ResponseEntity<UserResponseDto> updateUserName(
             @Valid @RequestBody UserNameUpdateRequestDto updateDto,
             @SessionAttribute("loginUser") UserSessionDto loginUser
@@ -85,8 +84,8 @@ public class UserController {
         return ResponseEntity.ok(userResponseDto);
     }
 
-    //유저 비밀번호 변경
-    @PatchMapping("/me/password")
+    //유저 비밀번호 변경 (통합하기)
+    @PatchMapping("/password")
     public ResponseEntity<String> updateUserPassword(
             @Valid @RequestBody UserPasswordUpdateRequestDto updateDto,
             @SessionAttribute("loginUser") UserSessionDto loginUser

@@ -59,7 +59,7 @@ public class TaskServiceImpl implements TaskService {
             spec = spec.and((root, query, cb) ->
                     cb.equal(cb.function("DATE", LocalDate.class, root.get("updatedAt")), date));
         }
-        Page<Task> taskPage = taskRepository.findWithFilters(spec, pageable);
+        Page<Task> taskPage = taskRepository.findAll(spec, pageable);
         return taskPage.map(TaskResponseDto::new);
     }
 

@@ -18,8 +18,7 @@ public class TaskResponseDto {
     private String content;   //내용
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime updatedAt;
-    //댓글 개수
-    //댓글들
+
     public TaskResponseDto(Task task){
         this.taskId = task.getId();
         this.userId = task.getUser().getId();

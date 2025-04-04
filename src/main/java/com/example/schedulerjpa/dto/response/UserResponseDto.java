@@ -14,5 +14,4 @@ public class UserResponseDto {
     private String email;     //이메일
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime updatedAt;
-    //유저가 작성한 댓글들
 }
