@@ -22,7 +22,7 @@ public class Comment extends BaseEntity{
     @JoinColumn(name = "task_id")
     private Task task;    //유저 아이디(외래키)
 
-    @Column(nullable = false)
+    @Column(name = "content", nullable = false)
     private String comment;   //댓글
 
     public Comment(User user, Task task, String comment){
